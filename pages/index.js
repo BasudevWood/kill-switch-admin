@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <div style={{ textAlign: "center", marginTop: "60px" }}>
-      <h1>FurnitureApp Kill Switch (Admin)</h1>
+      
 
       <div style={{ marginTop: "30px" }}>
         <button onClick={handleKill} style={{ padding: "12px 20px", marginRight: "12px" }}>
@@ -47,9 +47,7 @@ export default function Home() {
 
       <p style={{ marginTop: "24px", fontWeight: "bold" }}>{message}</p>
 
-      <p style={{ marginTop: "20px", color: "#666" }}>
-        Note: This admin page must be kept private. Anyone with access can suspend/resume your Render service.
-      </p>
+      
     </div>
   );
 }
