@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     }
 
     // 2) Give clients a short window to poll and react
-    await sleep(6000); // 6 seconds is usually enough; tweak if needed
+    await sleep(10000); // 6 seconds is usually enough; tweak if needed
 
     // 3) Suspend backend on Render
     const renderRes = await fetch(`https://api.render.com/v1/services/${SERVICE_ID}/suspend`, {
