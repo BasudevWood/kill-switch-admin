@@ -52,13 +52,15 @@ export default async function handler(req, res) {
     }
 
     // 3) Call admin resume endpoint to reset forceLogout = false
-    const resumeRes = await fetch(`${FURNITURE_API_BASE_URL}/api/admin/resume`, {
-      method: "POST",
-      headers: {
-        "x-admin-secret": GLOBAL_ADMIN_SECRET,
-        "Accept": "application/json"
-      }
-    });
+   const resumeRes = await fetch(`${FURNITURE_API_BASE_URL}/api/admin/resume`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-admin-secret": GLOBAL_ADMIN_SECRET,
+    "Accept": "application/json"
+  },
+  body: JSON.stringify({})   // Express expects a body
+});
 
     if (!resumeRes.ok) {
       const text = await resumeRes.text();
