@@ -1,26 +1,18 @@
-// kill-switch-admin/api/logout.js
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const {
-    RENDER_API_KEY,
-    FURNITURE_API_BASE_URL,
-    GLOBAL_ADMIN_SECRET
-  } = process.env;
-
+  const { RENDER_API_KEY, FURNITURE_API_BASE_URL, GLOBAL_ADMIN_SECRET } = process.env;
   const SERVICE_ID = process.env.RENDER_BACKEND_SERVICE_ID || process.env.SERVICE_ID;
 
   if (!RENDER_API_KEY || !SERVICE_ID || !FURNITURE_API_BASE_URL || !GLOBAL_ADMIN_SECRET) {
-    return res.status(500).json({
-      error: "Missing env vars. Make sure RENDER_API_KEY, SERVICE_ID, FURNITURE_API_BASE_URL, and GLOBAL_ADMIN_SECRET are set in Vercel."
-    });
+    return res.status(500).json({ error: "Missing env vars" });
   }
 
   try {
-    // 1) Force logout on Furniture backend
-    const backendRes = await fetch(`${FURNITURE_API_BASE_URL}/api/admin/global-logout`, {
+    // 1) tell Furniture backend to force logout
+    await fetch(`${FURNITURE_API_BASE_URL}/api/admin/global-logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,37 +21,18 @@ export default async function handler(req, res) {
       body: JSON.stringify({ message: "Forced logout via kill-switch-admin" })
     });
 
-    const backendData = await backendRes.json();
-
-    if (!backendRes.ok) {
-      return res.status(500).json({ error: "Furniture backend error", details: backendData });
-    }
-
-    console.log("✅ ForceLogout set in DB:", backendData);
-
-    // 👉 wait 2 seconds to let DB save, then suspend
-    await new Promise(r => setTimeout(r, 2000));
-
-    // 2) Suspend backend service on Render
+    // 2) suspend backend on Render
     const renderRes = await fetch(`https://api.render.com/v1/services/${SERVICE_ID}/suspend`, {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RENDER_API_KEY}`,
-        "Accept": "application/json"
-      }
+      headers: { "Authorization": `Bearer ${RENDER_API_KEY}`, "Accept": "application/json" }
     });
 
     if (!renderRes.ok) {
       const text = await renderRes.text();
-      return res.status(500).json({ error: "Render suspend error", details: text, backendData });
+      return res.status(500).json({ error: "Render suspend error", details: text });
     }
 
-    return res.json({
-      success: true,
-      message: "✅ All clients logged out and backend suspended",
-      backendData
-    });
-
+    return res.json({ success: true, message: "✅ Logout triggered & backend suspended" });
   } catch (err) {
     console.error("logout api error", err);
     return res.status(500).json({ error: err.message });
