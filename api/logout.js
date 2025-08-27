@@ -31,7 +31,17 @@ export default async function handler(req, res) {
       body: JSON.stringify({ message: "Forced logout via kill-switch-admin" })
     });
 
-    const backendData = await backendRes.json();
+    let backendData;
+try {
+  backendData = await backendRes.json();
+} catch {
+  const text = await backendRes.text();
+  console.error("Furniture backend raw response:", text);
+  return res.status(500).json({
+    error: "Furniture backend did not return JSON",
+    details: text
+  });
+}
     if (!backendRes.ok) {
       return res.status(500).json({ error: "Furniture backend error", details: backendData });
     }
