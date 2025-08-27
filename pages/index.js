@@ -31,6 +31,18 @@ export default function Home() {
     }
   };
 
+  const handleLogoutAll = async () => {
+  setMessage("Processing logout + suspend backend...");
+  try {
+    const res = await fetch("/api/logout", { method: "POST" });
+    const data = await res.json();
+    setMessage(data.message || "Logout triggered");
+  } catch (err) {
+    setMessage("Error: " + err.message);
+  }
+};
+
+
   return (
     <div style={{ textAlign: "center", marginTop: "60px" }}>
       
@@ -44,6 +56,10 @@ export default function Home() {
           🔄 Restart Service
         </button>
       </div>
+
+      <button onClick={handleLogoutAll} style={{ padding: "12px 20px", marginLeft: "12px" }}>
+  🔒 Logout All & Suspend Backend
+</button>
 
       <p style={{ marginTop: "24px", fontWeight: "bold" }}>{message}</p>
 
