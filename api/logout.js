@@ -50,8 +50,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Render suspend error", details: text, backendData });
     }
 
-    const renderData = await renderRes.json();
-    return res.json({ success: true, message: "✅ All clients logged out and backend suspended", backendData, renderData });
+   return res.json({
+  success: true,
+  message: "✅ All clients logged out and backend suspended",
+  backendData
+});
 
   } catch (err) {
     console.error('logout api error', err);
