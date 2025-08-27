@@ -1,3 +1,4 @@
+// kill-switch-admin/api/allow-login.js
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
@@ -5,17 +6,26 @@ export default async function handler(req, res) {
 
   const { FURNITURE_API_BASE_URL, GLOBAL_ADMIN_SECRET } = process.env;
 
+  if (!FURNITURE_API_BASE_URL || !GLOBAL_ADMIN_SECRET) {
+    return res.status(500).json({ error: "Missing env vars" });
+  }
+
   try {
     const backendRes = await fetch(`${FURNITURE_API_BASE_URL}/api/admin/allow-login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-admin-secret": GLOBAL_ADMIN_SECRET
+        "x-admin-secret": GLOBAL_ADMIN_SECRET,
+        "Accept": "application/json"
       }
     });
 
-    const data = await backendRes.json();
-    if (!backendRes.ok) return res.status(500).json({ error: "Allow login failed", details: data });
+    let data = null;
+    try { data = await backendRes.json(); } catch (_) { /* ignore non-JSON */ }
+
+    if (!backendRes.ok) {
+      return res.status(500).json({ error: "Allow login failed", details: data || null });
+    }
 
     return res.json({ success: true, message: "✅ Logins allowed again", data });
   } catch (err) {
