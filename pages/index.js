@@ -18,7 +18,7 @@ export default function Home() {
       <div>
         <button onClick={() => callApi("/api/logout")}>🔒 Logout All & Suspend Backend</button>
         <button onClick={() => callApi("/api/restart")}>🔄 Restart Service</button>
-        <button onClick={() => callApi("/api/allow-login")}>✅ Allow Login</button>
+        
       </div>
       <p style={{ marginTop: "24px", fontWeight: "bold" }}>{message}</p>
     </div>

@@ -25,10 +25,10 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Render API error: " + text });
     }
 
-    return res.json({
-      success: true,
-      message: "✅ Backend service restarted (still locked until Allow Login)."
-    });
+   return res.json({
+  success: true,
+  message: "✅ Backend service restarted (frontend will enable login once backend is reachable)."
+});
   } catch (err) {
     console.error("Restart error:", err);
     return res.status(500).json({ error: err.message });
